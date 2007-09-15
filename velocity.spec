@@ -36,7 +36,7 @@
 
 Name:           velocity
 Version:        1.5
-Release:        %mkrel 1.0.1
+Release:        %mkrel 1.0.2
 Epoch:          0
 Summary:        Java-based template engine
 License:        Apache Software License
@@ -81,8 +81,6 @@ Requires(post):    jpackage-utils >= 0:1.7.2
 Requires(postun):  jpackage-utils >= 0:1.7.2
 %if %{gcj_support}
 BuildRequires:     java-gcj-compat-devel
-Requires(post):    java-gcj-compat
-Requires(postun):  java-gcj-compat
 %endif
 
 %description
@@ -125,10 +123,6 @@ Summary:        Demo for %{name}
 Group:          Development/Java
 Requires:       %{name} = %{epoch}:%{version}-%{release}
 
-%if %{gcj_support}
-Requires(post):   java-gcj-compat
-Requires(postun): java-gcj-compat
-%endif
 
 %description    demo
 Demonstrations and samples for %{name}.
