@@ -69,7 +69,7 @@ BuildRequires:  log4j >= 0:1.1
 BuildRequires:  jakarta-oro
 # Use servletapi5 instead of servletapi5
 BuildRequires:  servletapi5
-BuildRequires:  werken-xpath
+BuildRequires:  werken.xpath
 
 BuildRequires:  jpackage-utils >= 0:1.7.2
 
