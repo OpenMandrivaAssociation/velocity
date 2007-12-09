@@ -36,7 +36,7 @@
 
 Name:           velocity
 Version:        1.5
-Release:        %mkrel 1.0.2
+Release:        %mkrel 2.0.1
 Epoch:          0
 Summary:        Java-based template engine
 License:        Apache Software License
@@ -56,6 +56,7 @@ Requires:       servletapi5
 Requires:       werken.xpath
 
 BuildRequires:  ant
+BuildRequires:  ant-junit
 BuildRequires:  antlr
 BuildRequires:  junit
 BuildRequires:  hsqldb
@@ -68,7 +69,7 @@ BuildRequires:  log4j >= 0:1.1
 BuildRequires:  jakarta-oro
 # Use servletapi5 instead of servletapi5
 BuildRequires:  servletapi5
-BuildRequires:  werken.xpath
+BuildRequires:  werken-xpath
 
 BuildRequires:  jpackage-utils >= 0:1.7.2
 
