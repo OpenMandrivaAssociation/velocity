@@ -36,7 +36,7 @@
 
 Name:           velocity
 Version:        1.5
-Release:        %mkrel 2.0.1
+Release:        %mkrel 2.0.2
 Epoch:          0
 Summary:        Java-based template engine
 License:        Apache Software License
@@ -71,7 +71,7 @@ BuildRequires:  jakarta-oro
 BuildRequires:  servletapi5
 BuildRequires:  werken.xpath
 
-BuildRequires:  jpackage-utils >= 0:1.7.2
+BuildRequires:  java-rpmbuild >= 0:1.7.2
 
 %if ! %{gcj_support}
 BuildArch:      noarch
