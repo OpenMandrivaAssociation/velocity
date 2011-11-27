@@ -30,7 +30,7 @@
 
 Name:           velocity
 Version:        1.6.4
-Release:        2
+Release:        4
 Summary:        Java-based template engine
 License:        ASL 2.0
 URL:            http://velocity.apache.org/
