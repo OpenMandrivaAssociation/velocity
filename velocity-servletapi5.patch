@@ -1,0 +1,29 @@
+--- velocity-1.6.3/src/test/org/apache/velocity/test/VelocityServletTestCase.java	2009-12-07 23:41:27.000000000 +0000
++++ velocity-1.6.3.mef/src/test/org/apache/velocity/test/VelocityServletTestCase.java	2010-01-15 13:03:56.465905895 +0000
+@@ -250,6 +250,11 @@
+         public void setAttribute(String name, Object value)
+         {
+         }
++
++	public Set getResourcePath(String path)
++	{
++	    return null;
++	}
+     }
+ 
+     static class MockHttpServletResponse implements HttpServletResponse
+@@ -408,5 +413,14 @@
+         public void setStatus(int i , String s)
+         {
+         }
++
++        public void setCharacterEncoding(String charset)
++        {
++        }
++
++         public String getContentType()
++         {
++             return null;
++         }
+     }
+ }
