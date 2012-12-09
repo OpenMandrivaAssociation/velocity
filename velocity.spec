@@ -1,4 +1,4 @@
-# Copyright (c) 2000-2005, JPackage Project
+# Copyright (c) 2000-2007, JPackage Project
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,26 +28,30 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+
+%define section free
+
+
 Name:           velocity
 Version:        1.6.4
-Release:        4
+Release:        2
+Epoch:          0
 Summary:        Java-based template engine
-License:        ASL 2.0
-URL:            http://velocity.apache.org/
+License:        Apache Software License
 Source0:        http://www.apache.org/dist/%{name}/engine/%{version}/%{name}-%{version}.tar.gz
 Source1:        http://repo1.maven.org/maven2/org/apache/%{name}/%{name}/%{version}/%{name}-%{version}.pom
-Patch0:		velocity-remove-avalon-logkit.patch
-Patch1:		velocity-use-system-jars.patch
-Patch2:		velocity-servletapi5.patch
-Patch3:		velocity-cleanup-pom.patch
+Patch0:         velocity-remove-avalon-logkit.patch
+Patch1:         velocity-use-system-jars.patch
+Patch2:         velocity-servletapi5.patch
+Patch3:         velocity-cleanup-pom.patch
 Patch4:         velocity-tomcat6.patch
-Group:          Development/Java
-Requires:       apache-commons-collections
-Requires:       apache-commons-logging
-Requires:       apache-commons-lang
+Group:          Development/Libraries/Java
+Requires:       jakarta-commons-collections
+Requires:       jakarta-commons-logging
+Requires:       jakarta-commons-lang
 Requires:       tomcat6-servlet-2.5-api
 Requires:       oro
-Requires:	werken-xpath
+Requires:       werken-xpath
 Requires:       junit
 Requires:       hsqldb
 Requires:       jdom
@@ -56,24 +60,33 @@ Requires:       log4j
 Requires(post): jpackage-utils
 Requires(postun): jpackage-utils
 
-BuildRequires:	werken-xpath
+BuildRequires:  werken-xpath
 BuildRequires:  ant
 BuildRequires:  antlr
 BuildRequires:  junit
-BuildRequires:	ant-junit
+BuildRequires:  ant-junit
 BuildRequires:  hsqldb
-BuildRequires:  apache-commons-collections
-BuildRequires:  apache-commons-logging
-BuildRequires:  apache-commons-lang
+BuildRequires:  jakarta-commons-collections
+BuildRequires:  jakarta-commons-logging
+BuildRequires:  jakarta-commons-lang
 BuildRequires:  tomcat6-servlet-2.5-api
 BuildRequires:  oro
 BuildRequires:  jdom
 BuildRequires:  bcel
 BuildRequires:  log4j
 BuildRequires:  jpackage-utils
+BuildRequires:  xml-commons-jaxp-1.3-apis
+BuildRequires:  xerces-j2
+
+URL:            http://velocity.apache.org/
+Group:          Development/Java
+# Use servletapi5 instead of servletapi5
+Requires:       servletapi5
+Requires:       werken.xpath
 
 # It fails one of the arithmetic test cases with gcj
-BuildRequires:	java-devel >= 0:1.6.0
+BuildRequires:  java-devel >= 1.6.0
+BuildRequires:	java-1.6.0-openjdk-devel
 BuildArch:      noarch
 
 %description
@@ -107,7 +120,6 @@ Documentation for %{name}.
 %package        javadoc
 Summary:        Javadoc for %{name}
 Group:          Development/Java
-Requires:       jpackage-utils
 
 %description    javadoc
 Javadoc for %{name}.
@@ -115,7 +127,8 @@ Javadoc for %{name}.
 %package        demo
 Summary:        Demo for %{name}
 Group:          Development/Java
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{name} = %{epoch}:%{version}-%{release}
+
 
 %description    demo
 Demonstrations and samples for %{name}.
@@ -152,7 +165,7 @@ cp %{SOURCE1} ./pom.xml
 %build
 export CLASSPATH=$(build-classpath \
 antlr \
-apache-commons-collections \
+jakarta-commons-collections \
 commons-lang \
 commons-logging \
 tomcat6-servlet-2.5-api \
@@ -161,7 +174,7 @@ oro \
 log4j \
 jdom \
 bcel \
-werken-xpath \
+werken.xpath \
 hsqldb \
 junit)
 ant \
@@ -204,25 +217,100 @@ install -pD -T -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 
 # -----------------------------------------------------------------------------
 
+
 %files
-%defattr(-,root,root,-)
+%defattr(0644,root,root,0755)
 %doc LICENSE NOTICE README.txt
 %{_javadir}/*.jar
-%{_mavendepmapfragdir}/*
 %{_mavenpomdir}/*
+%config(noreplace) %{_mavendepmapfragdir}/*
 
 %files manual
-%defattr(-,root,root,-)
-%doc LICENSE
+%defattr(0644,root,root,0755)
 %doc docs/*
 
 %files javadoc
-%defattr(-,root,root,-)
-%doc LICENSE
+%defattr(0644,root,root,0755)
 %{_javadocdir}/%{name}
 
 %files demo
-%defattr(-,root,root,-)
-%doc LICENSE
+%defattr(0644,root,root,0755)
 %{_datadir}/%{name}
 
+
+
+
+%changelog
+* Thu Feb 23 2012 Andrew Lukoshko <andrew.lukoshko@rosalab.ru> 0:1.6.4-1
+- adopted for 2011.0
+- spec updated with maven macroses
+- RPM5 don't need clean section anymore
+
+* Fri Dec 21 2007 Olivier Blin <oblin@mandriva.com> 0:1.5-2.0.2mdv2009.0
++ Revision: 136570
+- restore BuildRoot
+
+  + Thierry Vignaud <tvignaud@mandriva.com>
+    - kill re-definition of %%buildroot on Pixel's request
+
+* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 0:1.5-2.0.2mdv2008.1
++ Revision: 121046
+- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+
+* Sun Dec 09 2007 Alexander Kurtakov <akurtakov@mandriva.org> 0:1.5-2.0.1mdv2008.1
++ Revision: 116759
+- fix BR werken.xpath is in main, werken-xpath is in contrib
+- fix pom.xml (sync with jpp)
+
+* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 0:1.5-1.0.2mdv2008.0
++ Revision: 87243
+- rebuild to filter out autorequires of GCJ AOT objects
+- remove unnecessary Requires(post) on java-gcj-compat
+
+* Tue Sep 04 2007 David Walluck <walluck@mandriva.org> 0:1.5-1.0.1mdv2008.0
++ Revision: 78951
+- 1.5
+
+
+* Fri Mar 16 2007 Christiaan Welvaart <spturtle@mandriva.org> 0:1.4-4.3mdv2007.1
++ Revision: 144749
+- rebuild for 2007.1
+- Import velocity
+
+* Sun Jul 23 2006 David Walluck <walluck@mandriva.org> 0:1.4-4.1mdv2007.0
+- bump release
+
+* Sun Jun 04 2006 David Walluck <walluck@mandriva.org> 0:1.4-3.2mdv2007.0
+- rebuild for libgcj.so.7
+- aot-compile
+
+* Sun Sep 11 2005 David Walluck <walluck@mandriva.org> 0:1.4-3.1mdk
+- release
+
+* Thu Jun 16 2005 Gary Benson <gbenson@redhat.com> 0:1.4-3jpp_1fc
+- Build into Fedora.
+
+* Fri Jun 10 2005 Gary Benson <gbenson@redhat.com>
+- Remove jarfiles from the tarball.
+
+* Tue Jun 07 2005 Gary Benson <gbenson@redhat.com>
+- Build with servletapi5.
+- Add NOTICE file as per Apache License version 2.0.
+- Skip some failing tests.
+
+* Tue Oct 19 2004 Fernando Nasser <fnasser@redhat.com> 0:1.4-3jpp_1rh
+- First Red Hat build
+
+* Fri Sep 24 2004 Ralph Apel <r.apel at r-apel.de> 0:1.4-3jpp
+- Adapt to jdom-1.0-1 replacing org.jdom.input.DefaultJDOMFactory
+  by org.jdom.DefaultJDOMFactory in AnakiaJDOMFactory.java
+  as well as using org.jdom.output.Format in AnakiaTask.java
+- Therefore require jdom >= 0:1.0-1
+
+* Fri Sep 03 2004 Ralph Apel <r.apel at r-apel.de> 0:1.4-2jpp
+- Build with ant-1.6.2
+
+* Tue Jun 08 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 0:1.4-1jpp
+- 1.4 final
+- Patch #0 is unnecessary (upstream)
+- We have to build velocity against servletapi3
