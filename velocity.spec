@@ -34,7 +34,7 @@
 
 Name:           velocity
 Version:        1.7
-Release:        1
+Release:        2
 Epoch:          0
 Summary:        Java-based template engine
 License:        Apache Software License
@@ -80,7 +80,7 @@ BuildRequires:  xerces-j2
 URL:            http://velocity.apache.org/
 Group:          Development/Java
 # Use servletapi5 instead of servletapi5
-Requires:       servletapi5
+Requires:       servlet25
 Requires:       werken.xpath
 
 # It fails one of the arithmetic test cases with gcj
