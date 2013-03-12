@@ -61,6 +61,7 @@ Requires(postun): jpackage-utils
 BuildRequires:  werken-xpath
 BuildRequires:  ant
 BuildRequires:  antlr
+BuildRequires:	antlr-java
 BuildRequires:  junit
 BuildRequires:  ant-junit
 BuildRequires:  hsqldb
