@@ -1,6 +1,18 @@
---- velocity-1.6.3.mef/build/build.xml.orig	2010-01-15 12:53:01.344906711 +0000
-+++ velocity-1.6.3.mef/build/build.xml	2010-01-15 12:53:07.537915055 +0000
-@@ -138,28 +138,6 @@
+From 813085c72e9906a53bec5954bcce7305a7c320d1 Mon Sep 17 00:00:00 2001
+From: Stanislav Ochotnicky <sochotnicky@redhat.com>
+Date: Mon, 21 Feb 2011 17:58:39 +0100
+Subject: [PATCH 3/3] Use system jars
+
+---
+ build/build.xml     |   56 +++++++++++----------------------------------------
+ build/testcases.xml |    6 -----
+ 2 files changed, 12 insertions(+), 50 deletions(-)
+
+diff --git a/build/build.xml b/build/build.xml
+index c667553..479ef2d 100644
+--- a/build/build.xml
++++ b/build/build.xml
+@@ -140,28 +140,6 @@
    <!-- =================================================================== -->
    <!-- sets up the build environment (classpath and libs)                  -->
    <!-- =================================================================== -->
@@ -29,7 +41,7 @@
  
    <!-- =================================================================== -->
    <!-- checks for the existence/non-existence of various java features     -->
-@@ -172,12 +150,11 @@
+@@ -174,12 +152,11 @@
    <target name="prepare-jdbc" depends="check-jdbc,check-jdbc-true,check-jdbc-false"/>
    <target name="prepare-jdk14" depends="check-jdk14,check-jdk14-true,check-jdk14-false"/>
  
@@ -43,7 +55,7 @@
      </available>
    </target>
  
-@@ -208,10 +185,9 @@
+@@ -210,10 +187,9 @@
      </echo>
    </target>
  
@@ -55,7 +67,7 @@
      </available>
    </target>
  
-@@ -246,7 +222,7 @@
+@@ -248,7 +224,7 @@
    <!-- =================================================================== -->
    <target name="compile" depends="compile-src,compile-test"/>
  
@@ -64,7 +76,7 @@
            description="Compiles the Velocity source">
      <javac srcdir="${build.src}"
        destdir="${build.dest}"
-@@ -255,8 +231,7 @@
+@@ -257,8 +233,7 @@
        target="${javac.target}"
        source="${javac.source}"
        deprecation="${deprecation}"
@@ -74,7 +86,7 @@
  
      <copy todir="${build.dest}" filtering="yes">
        <fileset dir="${src.java.dir}">
-@@ -266,7 +241,7 @@
+@@ -268,7 +243,7 @@
  
    </target>
  
@@ -83,7 +95,7 @@
            description="Compiles the Velocity test classes">
      <javac srcdir="${build.test.src}"
        destdir="${build.test.dest}"
-@@ -277,8 +252,6 @@
+@@ -279,8 +254,6 @@
  
        <!-- Don't use the run classpath, build using the exploded class tree -->
        <classpath>
@@ -92,7 +104,7 @@
          <pathelement location="${build.dest}"/>
        </classpath>
      </javac>
-@@ -503,7 +476,7 @@
+@@ -561,7 +534,7 @@
    <!-- =================================================================== -->
    <!-- Compiles the example code                                           -->
    <!-- =================================================================== -->
@@ -101,7 +113,7 @@
            description="Compiles the Velocity Example code">
  
      <echo>
-@@ -527,8 +500,7 @@
+@@ -585,8 +558,7 @@
        encoding="UTF-8"
        debug="${debug}"
        deprecation="${deprecation}"
@@ -111,7 +123,7 @@
    </target>
  
    <target name="examples-clean" depends="examples-clean-anakia">
-@@ -546,7 +518,7 @@
+@@ -604,7 +576,7 @@
    <!-- =================================================================== -->
    <!-- Creates the API documentation                                       -->
    <!-- =================================================================== -->
@@ -120,7 +132,7 @@
            description="Creates the Javadoc API documentation">
  
      <mkdir dir="${build.javadoc}"/>
-@@ -562,8 +534,7 @@
+@@ -620,8 +592,7 @@
               doctitle="${name} ${version} API"
               encoding="UTF-8"
               docencoding="UTF-8"
@@ -130,7 +142,7 @@
  
        <link href="${javadocs.ref.jsdk}"/>
        <link href="http://www.jdom.org/docs/apidocs"/>
-@@ -918,12 +889,11 @@
+@@ -1024,12 +995,11 @@
    <!-- Make HTML version of Velocity documentation                         -->
    <!-- =================================================================== -->
  
@@ -145,16 +157,16 @@
  
      <echo>
    #######################################################
-@@ -1106,7 +1076,7 @@
+@@ -1231,7 +1201,7 @@
    <!-- =================================================================== -->
    <!-- JUnit Tests for Velocity                                            -->
    <!-- =================================================================== -->
--  <target name="test" depends="build-prepare,compile-test"
-+  <target name="test" depends="compile-test"
+-  <target name="test-main" depends="build-prepare,compile-test"
++  <target name="test-main" depends="compile-test"
            description="Run the Velocity testcases">
  
-     <mkdir dir="${build.test.reports}"/>
-@@ -1120,8 +1090,6 @@
+     <!-- Require ant 1.7+ for Junit compatibility -->
+@@ -1264,8 +1234,6 @@
  
        <!-- Don't use the run classpath, test using the exploded class tree -->
        <classpath>
@@ -163,8 +175,10 @@
          <pathelement path="${build.dest}"/>
          <pathelement path="${build.test.dest}"/>
        </classpath>
---- velocity-1.6.3.mef/build/testcases.xml.orig	2010-01-15 13:09:06.265907075 +0000
-+++ velocity-1.6.3.mef/build/testcases.xml	2010-01-15 13:09:08.356067618 +0000
+diff --git a/build/testcases.xml b/build/testcases.xml
+index 06bb36e..f3749bc 100644
+--- a/build/testcases.xml
++++ b/build/testcases.xml
 @@ -36,12 +36,6 @@
  
    <!-- Build classpath -->
@@ -178,3 +192,6 @@
      <pathelement location="${build.dest}"/>
      <pathelement location="${build.test.dest}"/>
    </path>
+-- 
+1.7.4
+

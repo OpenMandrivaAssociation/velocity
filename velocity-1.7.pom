@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <!--
  Licensed to the Apache Software Foundation (ASF) under one
  or more contributor license agreements.  See the NOTICE file
@@ -17,7 +18,10 @@
  specific language governing permissions and limitations
  under the License.    
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -29,10 +33,10 @@
 
   <groupId>org.apache.velocity</groupId>
   <artifactId>velocity</artifactId>
-  <version>1.6.4</version>
+  <version>1.7</version>
 
   <name>Apache Velocity</name>
-  <url>http://velocity.apache.org/engine/releases/velocity-1.6.2/</url>
+  <url>http://velocity.apache.org/engine/devel/</url>
   <description>Apache Velocity is a general purpose template engine.</description>
   <inceptionYear>2000</inceptionYear>
   <packaging>jar</packaging>
@@ -69,7 +73,7 @@
   <distributionManagement>
     <site>
       <id>velocity.apache.org</id>
-      <url>scpexe://people.apache.org/www/velocity.apache.org/engine/releases/velocity-1.6.4/</url>
+      <url>scpexe://people.apache.org/www/velocity.apache.org/engine/releases/velocity-1.7</url>
     </site>
     <repository>
       <id>apache.releases</id>
@@ -152,6 +156,7 @@
       <groupId>oro</groupId>
       <artifactId>oro</artifactId>
       <version>2.0.8</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
@@ -312,14 +317,22 @@
           <findbugsXmlOutputDirectory>xdocs</findbugsXmlOutputDirectory> 
         </configuration>
       </plugin>
+      <plugin>      
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.4</source>
+          <target>1.4</target>
+        </configuration>
+      </plugin>
     </plugins>
   </reporting>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/velocity/engine/branches/1.6.x</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/velocity/engine/branches/1.6.x</developerConnection>
+    <connection>scm:svn:http://svn.apache.org/repos/asf/velocity/engine/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/velocity/engine/trunk</developerConnection>
     <tag>HEAD</tag>
-    <url>http://svn.apache.org/viewvc/velocity/engine/branches/1.6.x</url>
+    <url>http://svn.apache.org/viewvc/velocity/engine/trunk</url>
   </scm>
 
     <properties>

@@ -33,8 +33,8 @@
 
 
 Name:           velocity
-Version:        1.6.4
-Release:        2
+Version:        1.7
+Release:        1
 Epoch:          0
 Summary:        Java-based template engine
 License:        Apache Software License
@@ -86,7 +86,7 @@ Requires:       werken.xpath
 
 # It fails one of the arithmetic test cases with gcj
 BuildRequires:  java-devel >= 1.6.0
-BuildRequires:	java-1.6.0-openjdk-devel
+BuildRequires:	java-1.7.0-openjdk-devel
 BuildArch:      noarch
 
 %description
@@ -145,20 +145,16 @@ find . -name '*.jar' -o -name '*.class' -not -path '*test*' -print -delete
 rm -f src/java/org/apache/velocity/runtime/log/AvalonLogChute.java
 rm -f src/java/org/apache/velocity/runtime/log/AvalonLogSystem.java
 rm -f src/java/org/apache/velocity/runtime/log/VelocityFormatter.java
+
+cp %{SOURCE1} ./pom.xml
+
+# remove rest of avalon logkit refences
 %patch0 -p1
 
-# Use system jars instead of downloading
-%patch1 -p1
-
-#Apply patch to remove explicit dependency on servletapi3
+# Use system jar files instead of downloading from net
 %patch2 -p1
 
-# Remove (unavailable) parent reference and avalon-logkit from POM
-cp %{SOURCE1} ./pom.xml
 %patch3 -p1
-
-# fix test for servlet api 2.5
-%patch4 -p1
 
 # -----------------------------------------------------------------------------
 
@@ -200,20 +196,12 @@ cp -pr docs/api/* %{buildroot}%{_javadocdir}/%{name}
 
 # data
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
-cp -pr convert examples test %{buildroot}%{_datadir}/%{name}
+cp -pr examples test %{buildroot}%{_datadir}/%{name}
 
 # Maven metadata
 install -pD -T -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-%add_to_maven_depmap org.apache.velocity %{name} %{version} JPP %{name}
-%add_to_maven_depmap %{name} %{name} %{version} JPP %{name}
 
-# -----------------------------------------------------------------------------
-
-%post
-%update_maven_depmap
-
-%postun
-%update_maven_depmap
+%add_maven_depmap -a "%{name}:%{name}"
 
 # -----------------------------------------------------------------------------
 
@@ -222,19 +210,19 @@ install -pD -T -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 %defattr(0644,root,root,0755)
 %doc LICENSE NOTICE README.txt
 %{_javadir}/*.jar
-%{_mavenpomdir}/*
-%config(noreplace) %{_mavendepmapfragdir}/*
+%{_mavendepmapfragdir}/%{name}
+%{_mavenpomdir}/JPP-%{name}.pom
 
 %files manual
-%defattr(0644,root,root,0755)
+%doc LICENSE
 %doc docs/*
 
 %files javadoc
-%defattr(0644,root,root,0755)
+%doc LICENSE
 %{_javadocdir}/%{name}
 
 %files demo
-%defattr(0644,root,root,0755)
+%doc LICENSE
 %{_datadir}/%{name}
 
 
