@@ -40,11 +40,9 @@ Summary:        Java-based template engine
 License:        Apache Software License
 Source0:        http://www.apache.org/dist/%{name}/engine/%{version}/%{name}-%{version}.tar.gz
 Source1:        http://repo1.maven.org/maven2/org/apache/%{name}/%{name}/%{version}/%{name}-%{version}.pom
-Patch0:         velocity-remove-avalon-logkit.patch
-Patch1:         velocity-use-system-jars.patch
-Patch2:         velocity-servletapi5.patch
-Patch3:         velocity-cleanup-pom.patch
-Patch4:         velocity-tomcat6.patch
+Patch0:         0001-Remove-avalon-logkit.patch
+Patch2:         0003-Use-system-jars.patch
+Patch3:         0004-JDBC-41-compat.patch
 Group:          Development/Libraries/Java
 Requires:       jakarta-commons-collections
 Requires:       jakarta-commons-logging
