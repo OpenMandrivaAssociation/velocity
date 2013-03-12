@@ -144,6 +144,9 @@ rm -f src/java/org/apache/velocity/runtime/log/AvalonLogChute.java
 rm -f src/java/org/apache/velocity/runtime/log/AvalonLogSystem.java
 rm -f src/java/org/apache/velocity/runtime/log/VelocityFormatter.java
 
+# need porting to new servlet API. We would just add a lot of empty functions
+rm  src/test/org/apache/velocity/test/VelocityServletTestCase.java
+
 cp %{SOURCE1} ./pom.xml
 
 # remove rest of avalon logkit refences
