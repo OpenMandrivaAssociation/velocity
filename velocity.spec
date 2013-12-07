@@ -34,7 +34,7 @@
 
 Name:           velocity
 Version:        1.7
-Release:        3
+Release:        4
 Epoch:          0
 Summary:        Java-based template engine
 License:        Apache Software License
