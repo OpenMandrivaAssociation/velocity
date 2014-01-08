@@ -1,4 +1,5 @@
-# Copyright (c) 2000-2007, JPackage Project
+%{?_javapackages_macros:%_javapackages_macros}
+# Copyright (c) 2000-2005, JPackage Project
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -28,64 +29,47 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-
-%define section free
-
-
 Name:           velocity
 Version:        1.7
-Release:        6
+Release:        9.1%{?dist}
 Epoch:          0
 Summary:        Java-based template engine
-License:        Apache Software License
+License:        ASL 2.0
+URL:            http://velocity.apache.org/
 Source0:        http://www.apache.org/dist/%{name}/engine/%{version}/%{name}-%{version}.tar.gz
 Source1:        http://repo1.maven.org/maven2/org/apache/%{name}/%{name}/%{version}/%{name}-%{version}.pom
 Patch0:         0001-Remove-avalon-logkit.patch
 Patch2:         0003-Use-system-jars.patch
 Patch3:         0004-JDBC-41-compat.patch
-Group:          Development/Libraries/Java
-Requires:       jakarta-commons-collections
-Requires:       jakarta-commons-logging
-Requires:       jakarta-commons-lang
-Requires:       tomcat6-servlet-2.5-api
-Requires:       oro
+Requires:       apache-commons-collections
+Requires:       apache-commons-logging
+Requires:       apache-commons-lang
+Requires:       servlet3
+Requires:       jakarta-oro
 Requires:       werken-xpath
 Requires:       junit
 Requires:       hsqldb
 Requires:       jdom
 Requires:       bcel
 Requires:       log4j
-Requires(post): jpackage-utils
-Requires(postun): jpackage-utils
 
-BuildRequires:  werken-xpath
+BuildRequires:	werken-xpath
 BuildRequires:  ant
 BuildRequires:  antlr
-BuildRequires:	antlr-java
 BuildRequires:  junit
-BuildRequires:  ant-junit
+BuildRequires:	ant-junit
 BuildRequires:  hsqldb
-BuildRequires:  jakarta-commons-collections
-BuildRequires:  jakarta-commons-logging
-BuildRequires:  jakarta-commons-lang
-BuildRequires:  tomcat6-servlet-2.5-api
-BuildRequires:  oro
+BuildRequires:  apache-commons-collections
+BuildRequires:  apache-commons-logging
+BuildRequires:  apache-commons-lang
+BuildRequires:  servlet3
+BuildRequires:  jakarta-oro
 BuildRequires:  jdom
 BuildRequires:  bcel
 BuildRequires:  log4j
-BuildRequires:  jpackage-utils
-BuildRequires:  xml-commons-jaxp-1.3-apis
-BuildRequires:  xerces-j2
-
-URL:            http://velocity.apache.org/
-Group:          Development/Java
-# Use servletapi5 instead of servletapi5
-Requires:       servlet25
-Requires:       werken.xpath
 
 # It fails one of the arithmetic test cases with gcj
-BuildRequires:  java-devel >= 1.6.0
-BuildRequires:	java-1.7.0-openjdk-devel
+BuildRequires:	java-devel >= 1:1.6.0
 BuildArch:      noarch
 
 %description
@@ -111,23 +95,19 @@ applications to be developed according to a true MVC model.
 
 %package        manual
 Summary:        Manual for %{name}
-Group:          Development/Java
 
 %description    manual
 Documentation for %{name}.
 
 %package        javadoc
 Summary:        Javadoc for %{name}
-Group:          Development/Java
 
 %description    javadoc
 Javadoc for %{name}.
 
 %package        demo
 Summary:        Demo for %{name}
-Group:          Development/Java
 Requires:       %{name} = %{epoch}:%{version}-%{release}
-
 
 %description    demo
 Demonstrations and samples for %{name}.
@@ -148,6 +128,9 @@ rm -f src/java/org/apache/velocity/runtime/log/VelocityFormatter.java
 # need porting to new servlet API. We would just add a lot of empty functions
 rm  src/test/org/apache/velocity/test/VelocityServletTestCase.java
 
+# This test doesn't work with new hsqldb
+rm src/test/org/apache/velocity/test/sql/DataSourceResourceLoaderTestCase.java
+
 cp %{SOURCE1} ./pom.xml
 
 # remove rest of avalon logkit refences
@@ -163,16 +146,16 @@ cp %{SOURCE1} ./pom.xml
 %build
 export CLASSPATH=$(build-classpath \
 antlr \
-jakarta-commons-collections \
+apache-commons-collections \
 commons-lang \
 commons-logging \
-tomcat6-servlet-2.5-api \
+tomcat-servlet-api \
 junit \
-oro \
+jakarta-oro \
 log4j \
 jdom \
 bcel \
-werken.xpath \
+werken-xpath \
 hsqldb \
 junit)
 ant \
@@ -186,7 +169,6 @@ sed -i 's/\r//' docs/api/stylesheet.css docs/api/package-list
 # -----------------------------------------------------------------------------
 
 %install
-rm -rf %{buildroot}
 
 # jars
 install -d -m 755 %{buildroot}%{_javadir}
@@ -205,102 +187,225 @@ install -pD -T -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
 
 %add_maven_depmap -a "%{name}:%{name}"
 
-# -----------------------------------------------------------------------------
-
 
 %files
-%defattr(0644,root,root,0755)
 %doc LICENSE NOTICE README.txt
 %{_javadir}/*.jar
 %{_mavendepmapfragdir}/%{name}
 %{_mavenpomdir}/JPP-%{name}.pom
 
 %files manual
-%doc LICENSE
+%doc LICENSE NOTICE
 %doc docs/*
 
 %files javadoc
-%doc LICENSE
+%doc LICENSE NOTICE
 %{_javadocdir}/%{name}
 
 %files demo
-%doc LICENSE
+%doc LICENSE NOTICE
 %{_datadir}/%{name}
 
-
-
-
 %changelog
-* Thu Feb 23 2012 Andrew Lukoshko <andrew.lukoshko@rosalab.ru> 0:1.6.4-1
-- adopted for 2011.0
-- spec updated with maven macroses
-- RPM5 don't need clean section anymore
+* Mon Aug 05 2013 Michal Srb <msrb@redhat.com> - 0:1.7-9
+- Fix FTBFS (Resolves: #992852)
 
-* Fri Dec 21 2007 Olivier Blin <oblin@mandriva.com> 0:1.5-2.0.2mdv2009.0
-+ Revision: 136570
-- restore BuildRoot
+* Sun Aug 04 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7-8
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
-  + Thierry Vignaud <tvignaud@mandriva.com>
-    - kill re-definition of %%buildroot on Pixel's request
+* Fri Feb 15 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7-7
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
-* Sun Dec 16 2007 Anssi Hannula <anssi@mandriva.org> 0:1.5-2.0.2mdv2008.1
-+ Revision: 121046
-- buildrequire java-rpmbuild, i.e. build with icedtea on x86(_64)
+* Wed Nov 21 2012 Mikolaj Izdebski <mizdebsk@redhat.com> - 0:1.7-6
+- Install NOTICE files
+- Resolves: rhbz#879021
 
-* Sun Dec 09 2007 Alexander Kurtakov <akurtakov@mandriva.org> 0:1.5-2.0.1mdv2008.1
-+ Revision: 116759
-- fix BR werken.xpath is in main, werken-xpath is in contrib
-- fix pom.xml (sync with jpp)
+* Sun Jul 22 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7-5
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
-* Sat Sep 15 2007 Anssi Hannula <anssi@mandriva.org> 0:1.5-1.0.2mdv2008.0
-+ Revision: 87243
-- rebuild to filter out autorequires of GCJ AOT objects
-- remove unnecessary Requires(post) on java-gcj-compat
+* Tue Jun 05 2012 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7-4
+- Use new tomcat-servlet-api
+- Update to latest guidelines
 
-* Tue Sep 04 2007 David Walluck <walluck@mandriva.org> 0:1.5-1.0.1mdv2008.0
-+ Revision: 78951
-- 1.5
+* Fri Feb 17 2012 Deepak Bhole <dbhole@redhat.com> - 0:1.7-3
+- Resolved rhbz#791045
+- Added patch from Omaid Majid <omajid@redhat.com> to fix build with Java 7
 
+* Sat Jan 14 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.7-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
-* Fri Mar 16 2007 Christiaan Welvaart <spturtle@mandriva.org> 0:1.4-4.3mdv2007.1
-+ Revision: 144749
-- rebuild for 2007.1
-- Import velocity
+* Mon Feb 21 2011 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.7-1
+- Update to latest version
+- Drop old patches
 
-* Sun Jul 23 2006 David Walluck <walluck@mandriva.org> 0:1.4-4.1mdv2007.0
-- bump release
+* Mon Feb 07 2011 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.6.4-3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_15_Mass_Rebuild
 
-* Sun Jun 04 2006 David Walluck <walluck@mandriva.org> 0:1.4-3.2mdv2007.0
-- rebuild for libgcj.so.7
-- aot-compile
+* Fri Dec 17 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.6.4-2
+- Add compatibility depmap
 
-* Sun Sep 11 2005 David Walluck <walluck@mandriva.org> 0:1.4-3.1mdk
-- release
+* Wed Nov  3 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.6.4-1
+- Rebase to latest upstream
+- Fix problems from bz#226525
 
-* Thu Jun 16 2005 Gary Benson <gbenson@redhat.com> 0:1.4-3jpp_1fc
+* Thu Oct 14 2010 Stanislav Ochotnicky <sochotnicky@redhat.com> - 0:1.6.3-5
+- Use apache-commons-collections instead of jakarta name
+- Use tomcat6 for dependency instead of tomcat5 (bz#640660)
+
+* Mon Jun 7 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.6.3-4
+- Fix BR/R for jakarta-commons-rename.
+
+* Sat Feb 13 2010 Mary Ellen Foster <mefoster at gmail.com> 0:1.6.3-3
+- Get (Build)Requires right
+
+* Sat Feb 13 2010 Mary Ellen Foster <mefoster at gmail.com> 0:1.6.3-2
+- Require all of the packages in the POM
+- Add dist to version
+
+* Fri Jan 15 2010 Mary Ellen Foster <mefoster at gmail.com> 0:1.6.3-1
+- Update to 1.6.3
+- Remove dependency on avalon-logkit
+- Add maven metadata and pom
+
+* Sun Jan 10 2010 Alexander Kurtakov <akurtako@redhat.com> 0:1.4-10.5
+- Drop gcj_support.
+- Fix groups and url.
+- Use upstream tarball.
+
+* Mon Aug 10 2009 Ville Skyttä <ville.skytta@iki.fi> - 0:1.4-10.4
+- Convert specfile to UTF-8.
+
+* Sun Jul 26 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4-9.4
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
+
+* Fri Apr 24 2009 Milos Jakubicek <xjakub@fi.muni.cz> - 0:1.4-8.4
+- Fix FTBFS: added velocity-enum.patch (enum is a reserved keyword in java >= 1.5)
+
+* Wed Feb 25 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 0:1.4-8.3
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_11_Mass_Rebuild
+
+* Thu Jul 10 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 0:1.4-7.3
+- drop repotag
+
+* Thu May 29 2008 Tom "spot" Callaway <tcallawa@redhat.com> - 0:1.4-7jpp.2
+- fix license tag
+
+* Tue Feb 19 2008 Fedora Release Engineering <rel-eng@fedoraproject.org> - 0:1.4-7jpp.1
+- Autorebuild for GCC 4.3
+
+* Tue Aug 08 2006 Vivek Lakshmanan <vivekl@redhat.com> - 0:1.4-6jpp.1
+- Resync with latest from JPP.
+- Partially adopt new naming convention.
+
+* Sat Jul 22 2006 Vivek Lakshmanan <vivekl@redhat.com> - 0:1.4-5jpp_2fc
+- Rebuilt
+
+* Sat Jul 22 2006 Vivek Lakshmanan <vivekl@redhat.com> - 0:1.4-5jpp_1fc
+- Merge with latest from JPP.
+- Remove fileversion and my_version macros.
+- Remove notexentests patch and replace with a patch to disable
+- failure on tests.
+
+* Sat Jul 22 2006 Jakub Jelinek <jakub@redhat.com> - 0:1.4-3jpp_8fc
+- Rebuilt
+
+* Tue Jul 18 2006 Deepak Bhole <dbhole@redhat.com> - 0:1.4-3jpp_7fc
+- Build on all archs.
+
+* Wed Jul 12 2006 Jesse Keating <jkeating@redhat.com> - 0:1.4-3jpp_6fc
+- rebuild
+
+* Wed Mar  8 2006 Rafael Schloming <rafaels@redhat.com> - 0:1.4-3jpp_5fc
+- excluded s390[x] and ppc64 due to eclipse
+
+* Mon Mar  6 2006 Jeremy Katz <katzj@redhat.com> - 0:1.4-3jpp_4fc
+- stop scriptlet spew
+
+* Wed Dec 21 2005 Jesse Keating <jkeating@redhat.com> - 0:1.4-3jpp_3fc
+- rebuilt again
+
+* Fri Dec 09 2005 Jesse Keating <jkeating@redhat.com> - 0:1.4-3jpp_2fc
+- rebuilt
+
+* Tue Nov  8 2005 Vadim Nasardinov <vadimn@redhat.com> - 0:1.4-3jpp_1fc
+- Converted from ISO-8859-1 to UTF-8
+
+* Wed Jun 15 2005 Gary Benson <gbenson@redhat.com> 0:1.4-3jpp_1fc
 - Build into Fedora.
 
-* Fri Jun 10 2005 Gary Benson <gbenson@redhat.com>
+* Thu Jun  9 2005 Gary Benson <gbenson@redhat.com>
 - Remove jarfiles from the tarball.
 
-* Tue Jun 07 2005 Gary Benson <gbenson@redhat.com>
+* Mon Jun  6 2005 Gary Benson <gbenson@redhat.com>
 - Build with servletapi5.
 - Add NOTICE file as per Apache License version 2.0.
 - Skip some failing tests.
 
-* Tue Oct 19 2004 Fernando Nasser <fnasser@redhat.com> 0:1.4-3jpp_1rh
+* Mon Oct 18 2004 Fernando Nasser <fnasser@redhat.com> 0:1.4-3jpp_1rh
 - First Red Hat build
 
-* Fri Sep 24 2004 Ralph Apel <r.apel at r-apel.de> 0:1.4-3jpp
+* Thu Sep 23 2004 Ralph Apel <r.apel at r-apel.de> 0:1.4-3jpp
 - Adapt to jdom-1.0-1 replacing org.jdom.input.DefaultJDOMFactory
   by org.jdom.DefaultJDOMFactory in AnakiaJDOMFactory.java
   as well as using org.jdom.output.Format in AnakiaTask.java
 - Therefore require jdom >= 0:1.0-1
 
-* Fri Sep 03 2004 Ralph Apel <r.apel at r-apel.de> 0:1.4-2jpp
+* Thu Sep 02 2004 Ralph Apel <r.apel at r-apel.de> 0:1.4-2jpp
 - Build with ant-1.6.2
 
-* Tue Jun 08 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 0:1.4-1jpp
+* Mon Jun 07 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 0:1.4-1jpp
 - 1.4 final
 - Patch #0 is unnecessary (upstream)
 - We have to build velocity against servletapi3
+
+* Wed Feb 18 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 0:1.4-0.rc1.2jpp
+- Fix a few jpackage related .spec typos, oops.
+
+* Wed Feb 18 2004 Kaj J. Niemi <kajtzu@fi.basen.net> 0:1.4-0.rc1.1jpp
+- Added Patch #0 (velocity-1.4-rc1-ServletTest.patch) from CVS which fixes
+  build problems.
+
+* Sun May 25 2003 Ville Skyttä <ville.skytta@iki.fi> - 0:1.3.1-2jpp
+- Add Epochs to dependencies.
+- Add explicit defattrs.
+- Add non-versioned javadoc symlinks.
+- Use sed instead of bash 2 extension when symlinking jars during build.
+- Use full URL in Source.
+- Fix -javadoc Group tag.
+- Drop patch in favour of ant options.
+- BuildRequire jpackage-utils and antlr (latter needed for Anakia tests).
+
+* Sat May 24 2003 Richard Bullington-McGuire <rbulling@pkrinternet.com> 1.3.1-1jpp
+- 1.3.1 stable release
+
+* Fri May 23 2003 Richard Bullington-McGuire <rbulling@pkrinternet.com> 1.3-1jpp
+- 1.3 stable release
+- Updated for JPackage 1.5
+- Run JUnit regression tests as part of the build process
+- Added patch file to fix test case classpath for JUnit standard locations
+
+* Mon May 06 2002 Guillaume Rousse <guillomovitch@users.sourceforge.net> 1.3-0.rc1.1jpp
+- 1.3.0rc1
+- dropped patch
+- versioned dir for javadoc
+- no dependencies for manual and javadoc packages
+- stricter dependency for demo package
+
+* Wed Dec 12 2001 Guillaume Rousse <guillomovitch@users.sourceforge.net> 1.2-1jpp
+- 1.2
+- regenerated patch and corrected manifest
+- requires and buildrequires jdom >= 1.0-0.b7.1
+
+* Wed Dec 5 2001 Guillaume Rousse <guillomovitch@users.sourceforge.net> 1.1-4jpp
+- javadoc into javadoc package
+
+* Wed Nov 21 2001 Christian Zoffoli <czoffoli@littlepenguin.org> 1.1-3jpp
+- removed packager tag
+- new jpp extension
+
+* Thu Nov 1 2001 Guillaume Rousse <guillomovitch@users.sourceforge.net> 1.1-2jpp
+- first unified release
+- s/jPackage/JPackage
+
+* Fri Sep 14 2001 Guillaume Rousse <guillomovitch@users.sourceforge.net> 1.1-1jpp
+- first Mandrake release
