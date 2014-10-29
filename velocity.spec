@@ -31,7 +31,7 @@
 
 Name:           velocity
 Version:        1.7
-Release:        9.1%{?dist}
+Release:        10
 Epoch:          0
 Summary:        Java-based template engine
 License:        ASL 2.0
@@ -41,12 +41,14 @@ Source1:        http://repo1.maven.org/maven2/org/apache/%{name}/%{name}/%{versi
 Patch0:         0001-Remove-avalon-logkit.patch
 Patch2:         0003-Use-system-jars.patch
 Patch3:         0004-JDBC-41-compat.patch
+Patch4:		0006-Skip-Java-8-incompatible-test.patch
+Patch5:		0001-Don-t-use-Werken-XPath.patch
 Requires:       apache-commons-collections
 Requires:       apache-commons-logging
 Requires:       apache-commons-lang
 Requires:       servlet3
 Requires:       jakarta-oro
-Requires:       werken-xpath
+Requires:       jaxen
 Requires:       junit
 Requires:       hsqldb
 Requires:       jdom
@@ -141,6 +143,10 @@ cp %{SOURCE1} ./pom.xml
 
 %patch3 -p1
 
+%patch4 -p1
+
+%patch5 -p1
+
 # -----------------------------------------------------------------------------
 
 %build
@@ -153,6 +159,7 @@ tomcat-servlet-api \
 junit \
 jakarta-oro \
 log4j \
+jaxen \
 jdom \
 bcel \
 werken-xpath \
