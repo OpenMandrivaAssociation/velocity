@@ -31,7 +31,7 @@
 
 Name:           velocity
 Version:        1.7
-Release:        10
+Release:        11
 Epoch:          0
 Summary:        Java-based template engine
 License:        ASL 2.0
