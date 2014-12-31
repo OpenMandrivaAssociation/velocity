@@ -128,7 +128,6 @@ log4j:log4j:1.2.17 \
 jaxen \
 jdom \
 bcel \
-werken-xpath \
 hsqldb \
 junit)
 ant \
