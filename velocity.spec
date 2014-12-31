@@ -1,66 +1,28 @@
 %{?_javapackages_macros:%_javapackages_macros}
-# Copyright (c) 2000-2005, JPackage Project
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the
-#    distribution.
-# 3. Neither the name of the JPackage Project nor the names of its
-#    contributors may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-# OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-# LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-# THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
 
 Name:           velocity
 Version:        1.7
-Release:        11
+Release:        16.1
 Epoch:          0
 Summary:        Java-based template engine
+Group:		Development/Java
 License:        ASL 2.0
 URL:            http://velocity.apache.org/
 Source0:        http://www.apache.org/dist/%{name}/engine/%{version}/%{name}-%{version}.tar.gz
 Source1:        http://repo1.maven.org/maven2/org/apache/%{name}/%{name}/%{version}/%{name}-%{version}.pom
 Patch0:         0001-Remove-avalon-logkit.patch
+Patch1:		0004-Use-log4j-1.2.17.patch
 Patch2:         0003-Use-system-jars.patch
 Patch3:         0004-JDBC-41-compat.patch
 Patch4:		0006-Skip-Java-8-incompatible-test.patch
 Patch5:		0001-Don-t-use-Werken-XPath.patch
-Requires:       apache-commons-collections
-Requires:       apache-commons-logging
-Requires:       apache-commons-lang
-Requires:       servlet3
-Requires:       jakarta-oro
-Requires:       jaxen
-Requires:       junit
-Requires:       hsqldb
-Requires:       jdom
-Requires:       bcel
-Requires:       log4j
 
 BuildRequires:	werken-xpath
 BuildRequires:  ant
 BuildRequires:  antlr
 BuildRequires:  junit
 BuildRequires:	ant-junit
-BuildRequires:  hsqldb
+BuildRequires:  hsqldb-lib
 BuildRequires:  apache-commons-collections
 BuildRequires:  apache-commons-logging
 BuildRequires:  apache-commons-lang
@@ -68,7 +30,8 @@ BuildRequires:  servlet3
 BuildRequires:  jakarta-oro
 BuildRequires:  jdom
 BuildRequires:  bcel
-BuildRequires:  log4j
+BuildRequires:  log4j12
+BuildRequires:	apache-parent
 
 # It fails one of the arithmetic test cases with gcj
 BuildRequires:	java-devel >= 1:1.6.0
@@ -117,7 +80,7 @@ Demonstrations and samples for %{name}.
 # -----------------------------------------------------------------------------
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q
 
 # remove bundled libs/classes (except those used for testing)
 find . -name '*.jar' -o -name '*.class' -not -path '*test*' -print -delete
@@ -137,6 +100,8 @@ cp %{SOURCE1} ./pom.xml
 
 # remove rest of avalon logkit refences
 %patch0 -p1
+
+%patch1 -p1
 
 # Use system jar files instead of downloading from net
 %patch2 -p1
@@ -158,7 +123,7 @@ commons-logging \
 tomcat-servlet-api \
 junit \
 jakarta-oro \
-log4j \
+log4j:log4j:1.2.17 \
 jaxen \
 jdom \
 bcel \
@@ -177,37 +142,24 @@ sed -i 's/\r//' docs/api/stylesheet.css docs/api/package-list
 
 %install
 
-# jars
-install -d -m 755 %{buildroot}%{_javadir}
-install -p -m 644 bin/%{name}-%{version}.jar %{buildroot}%{_javadir}/%{name}.jar
-
-# javadoc
-install -d -m 755 %{buildroot}%{_javadocdir}/%{name}
-cp -pr docs/api/* %{buildroot}%{_javadocdir}/%{name}
+%mvn_file : %{name}
+%mvn_alias : %{name}:%{name}
+%mvn_artifact pom.xml bin/%{name}-%{version}.jar
+%mvn_install -J docs/api
 
 # data
 install -d -m 755 %{buildroot}%{_datadir}/%{name}
 cp -pr examples test %{buildroot}%{_datadir}/%{name}
 
-# Maven metadata
-install -pD -T -m 644 pom.xml %{buildroot}%{_mavenpomdir}/JPP-%{name}.pom
-
-%add_maven_depmap -a "%{name}:%{name}"
-
-
-%files
+%files -f .mfiles
 %doc LICENSE NOTICE README.txt
-%{_javadir}/*.jar
-%{_mavendepmapfragdir}/%{name}
-%{_mavenpomdir}/JPP-%{name}.pom
 
 %files manual
 %doc LICENSE NOTICE
 %doc docs/*
 
-%files javadoc
+%files javadoc -f .mfiles-javadoc
 %doc LICENSE NOTICE
-%{_javadocdir}/%{name}
 
 %files demo
 %doc LICENSE NOTICE
