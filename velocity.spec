@@ -17,7 +17,7 @@ Patch3:         0004-JDBC-41-compat.patch
 Patch4:		0006-Skip-Java-8-incompatible-test.patch
 Patch5:		0001-Don-t-use-Werken-XPath.patch
 
-BuildRequires:	werken-xpath
+BuildRequires:	javapackages-local
 BuildRequires:  ant
 BuildRequires:  antlr
 BuildRequires:  junit
@@ -28,6 +28,7 @@ BuildRequires:  apache-commons-logging
 BuildRequires:  apache-commons-lang
 BuildRequires:  servlet3
 BuildRequires:  jakarta-oro
+BuildRequires:	jaxen
 BuildRequires:  jdom
 BuildRequires:  bcel
 BuildRequires:  log4j12
