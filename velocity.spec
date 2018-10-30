@@ -2,7 +2,7 @@
 
 Name:           velocity
 Version:        1.7
-Release:        16.3
+Release:        16.4
 Epoch:          0
 Summary:        Java-based template engine
 Group:		Development/Java
