@@ -7,7 +7,7 @@ Epoch:          0
 Summary:        Java-based template engine
 Group:		Development/Java
 License:        ASL 2.0
-URL:            http://velocity.apache.org/
+URL:            https://velocity.apache.org/
 Source0:        http://www.apache.org/dist/%{name}/engine/%{version}/%{name}-%{version}.tar.gz
 Source1:        http://repo1.maven.org/maven2/org/apache/%{name}/%{name}/%{version}/%{name}-%{version}.pom
 Patch0:         0001-Remove-avalon-logkit.patch
